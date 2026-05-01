@@ -1,0 +1,79 @@
+# starship-ssh.toml
+# SSH oturumu — Nerd Font yok, sade semboller, hızlı
+
+"$schema" = 'https://starship.rs/config-schema.json'
+
+add_newline = false
+command_timeout = 500
+
+format = """
+$username\
+$hostname\
+$directory\
+$git_branch\
+$git_status\
+$cmd_duration\
+$line_break\
+$character"""
+
+[character]
+success_symbol = '[>](bold green)'
+error_symbol   = '[>](bold red)'
+vimcmd_symbol  = '[<](bold yellow)'
+
+[directory]
+style             = 'bold cyan'
+truncation_length = 2
+truncate_to_repo  = true
+format            = '[$path]($style) '
+read_only         = ' [RO]'
+
+[username]
+show_always = true
+style_user  = 'bold yellow'
+style_root  = 'bold red'
+format      = '[$user]($style)@'
+
+[hostname]
+ssh_only = false
+style    = 'bold green'
+format   = '[$hostname]($style) in '
+
+[git_branch]
+symbol = ''
+style  = 'purple'
+format = 'on [$symbol$branch]($style) '
+
+[git_status]
+style    = 'red'
+format   = '([$all_status$ahead_behind]($style) )'
+ahead    = '^${count}'
+behind   = 'v${count}'
+modified = '*'
+staged   = '+'
+untracked = '?'
+conflicted = '!'
+
+[cmd_duration]
+min_time = 3000
+format   = '[${duration}]($style) '
+style    = 'dimmed white'
+
+# Dil modüllerini kapat — SSH'ta genelde gerekmez, prompt yavaşlatır
+[python]
+disabled = true
+
+[nodejs]
+disabled = true
+
+[rust]
+disabled = true
+
+[golang]
+disabled = true
+
+[docker_context]
+disabled = true
+
+[os]
+disabled = true

@@ -1,0 +1,114 @@
+# starship-full.toml
+# Lokal terminal, truecolor, Nerd Font mevcut
+
+"$schema" = 'https://starship.rs/config-schema.json'
+
+add_newline = true
+command_timeout = 800
+
+format = """
+$os\
+$username\
+$directory\
+$git_branch\
+$git_status\
+$git_state\
+$python\
+$node\
+$rust\
+$golang\
+$docker_context\
+$cmd_duration\
+$line_break\
+$character"""
+
+# ── Karakter ──────────────────────────────────
+[character]
+success_symbol = '[❯](bold #9ece6a)'
+error_symbol   = '[❯](bold #f7768e)'
+vimcmd_symbol  = '[❮](bold #bb9af7)'
+
+# ── Dizin ─────────────────────────────────────
+[directory]
+style            = 'bold #7aa2f7'
+truncation_length = 3
+truncate_to_repo  = true
+format           = '[$path]($style)[$read_only]($read_only_style) '
+read_only        = ' 󰌾'
+
+# ── Git ───────────────────────────────────────
+[git_branch]
+symbol = ' '
+style  = '#bb9af7'
+format = 'on [$symbol$branch(:$remote_branch)]($style) '
+
+[git_status]
+style     = '#f7768e'
+format    = '([$all_status$ahead_behind]($style) )'
+conflicted  = '󰩤 '
+ahead       = '⇡${count} '
+behind      = '⇣${count} '
+diverged    = '⇕ '
+untracked   = '? '
+stashed     = ' '
+modified    = '! '
+staged      = '+ '
+renamed     = '» '
+deleted     = '✘ '
+
+[git_state]
+format = '\([$state( $progress_current/$progress_total)]($style)\) '
+style  = '#e0af68'
+
+# ── Diller ────────────────────────────────────
+[python]
+symbol = ' '
+format = '[${symbol}${pyenv_prefix}(${version} )(\($virtualenv\) )]($style)'
+style  = '#e0af68'
+
+[nodejs]
+symbol = ' '
+format = '[$symbol($version )]($style)'
+style  = '#9ece6a'
+
+[rust]
+symbol = '󱘗 '
+format = '[$symbol($version )]($style)'
+style  = '#f7768e'
+
+[golang]
+symbol = ' '
+format = '[$symbol($version )]($style)'
+style  = '#7dcfff'
+
+# ── Sistem ────────────────────────────────────
+[os]
+disabled = false
+format   = '[$symbol]($style) '
+style    = '#565f89'
+
+[os.symbols]
+Macos  = ''
+Ubuntu = ''
+Debian = ''
+Fedora = ''
+Arch   = ''
+Alpine = ''
+
+[username]
+show_always = false
+style_user  = '#7aa2f7'
+style_root  = 'bold #f7768e'
+format      = '[$user]($style) in '
+
+[docker_context]
+symbol = ' '
+format = '[$symbol$context]($style) '
+style  = '#7dcfff'
+only_with_files = true
+
+# ── Süre ──────────────────────────────────────
+[cmd_duration]
+min_time = 2000
+format   = '[$duration]($style) '
+style    = '#565f89'

@@ -1,0 +1,206 @@
+# ─────────────────────────────────────────────────────────────
+#  ~/.gitignore_global
+#  Tüm repolarda geçerli — proje .gitignore'una ekleme
+# ─────────────────────────────────────────────────────────────
+
+# ── macOS ──────────────────────────────────────────────────────
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+.AppleDouble
+.LSOverride
+.AppleDB
+.AppleDesktop
+Icon?
+Network Trash Folder
+Temporary Items
+
+# ── Windows ────────────────────────────────────────────────────
+Thumbs.db
+Thumbs.db:encryptable
+ehthumbs.db
+ehthumbs_vista.db
+Desktop.ini
+$RECYCLE.BIN/
+*.stackdump
+[Dd]esktop.ini
+*.lnk
+
+# ── Linux ──────────────────────────────────────────────────────
+*~
+.fuse_hidden*
+.directory
+.Trash-*
+.nfs*
+
+# ── Editörler ──────────────────────────────────────────────────
+
+# Vim
+[._]*.s[a-v][a-z]
+!*.svg
+[._]*.sw[a-p]
+[._]s[a-rt-v][a-z]
+[._]ss[a-gi-z]
+[._]sw[a-p]
+Session.vim
+Sessionx.vim
+.netrwhist
+tags
+[._]*.un~
+
+# NeoVim
+.nvimlog
+
+# VSCode
+.vscode/
+!.vscode/settings.json   # proje geneli ayarlar paylaşılabilir
+!.vscode/extensions.json
+*.code-workspace
+
+# JetBrains (IntelliJ, GoLand, PyCharm, vb.)
+.idea/
+*.iml
+*.iws
+*.ipr
+out/
+.idea_modules/
+
+# Emacs
+*~
+\#*\#
+/.emacs.desktop
+/.emacs.desktop.lock
+*.elc
+auto-save-list
+tramp
+.\#*
+
+# Sublime Text
+*.tmlanguage.cache
+*.tmPreferences.cache
+*.stTheme.cache
+*.sublime-workspace
+*.sublime-project
+
+# ── Geliştirme araçları ────────────────────────────────────────
+
+# Ortam değişkenleri — asla commit'leme
+.env
+.env.*
+!.env.example
+!.env.sample
+.envrc
+
+# Bağımlılık dizinleri (her dil kendi .gitignore'unda olmalı ama güvence)
+node_modules/
+.pnp
+.pnp.js
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyo
+.Python
+.venv/
+venv/
+ENV/
+env/
+.python-version
+*.egg-info/
+dist/
+build/
+.eggs/
+.mypy_cache/
+.ruff_cache/
+.pytest_cache/
+htmlcov/
+.coverage
+.coverage.*
+coverage.xml
+
+# Ruby
+.bundle/
+vendor/bundle
+*.gem
+
+# Go
+/vendor/
+
+# Rust
+/target/
+Cargo.lock          # lib için; binary projede bu satırı kaldır
+
+# ── Loglar & geçici dosyalar ───────────────────────────────────
+*.log
+*.logs
+logs/
+tmp/
+temp/
+*.tmp
+*.temp
+*.bak
+*.swp
+*.swo
+*.orig
+
+# ── Güvenlik & sırlar ─────────────────────────────────────────
+*.pem
+*.key
+*.p12
+*.pfx
+*.cer
+*.crt
+id_rsa
+id_rsa.*
+id_ed25519
+id_ed25519.*
+*.pub           # açık anahtarı commit'lemek isteyebilirsin, dikkat
+.ssh/
+secrets/
+secret/
+credentials/
+*_secret*
+*_credentials*
+
+# ── Paket & derleme çıktıları ──────────────────────────────────
+*.o
+*.a
+*.so
+*.dylib
+*.dll
+*.exe
+*.out
+*.app
+*.dmg
+*.pkg
+*.deb
+*.rpm
+*.tar
+*.tar.gz
+*.tar.bz2
+*.tar.xz
+*.zip
+*.7z
+*.rar
+
+# ── Docker & Vagrant ──────────────────────────────────────────
+.vagrant/
+*.box
+
+# ── Terraform ─────────────────────────────────────────────────
+**/.terraform/*
+*.tfstate
+*.tfstate.*
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+.terraform.lock.hcl
+
+# ── Kişisel notlar (repodan dışla) ───────────────────────────
+NOTES.md
+TODO.local.md
+SCRATCH.md

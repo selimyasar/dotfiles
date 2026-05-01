@@ -1,0 +1,131 @@
+[user]
+	name  = Selim Yasar
+	email = selimyasarrr@gmail.com
+
+[core]
+	editor      = vim
+	autocrlf    = input          # macOS/Linux: LF koru, Windows CRLF → LF
+	whitespace  = trailing-space,space-before-tab
+	excludesfile = ~/.gitignore_global
+	pager       = delta          # delta kuruluysa güzel diff; yoksa git kendi pager'ını kullanır
+
+[init]
+	defaultBranch = main
+
+[pull]
+	rebase = false               # pull = merge (rebase tercih edersen: true)
+
+[push]
+	default       = current      # git push → mevcut branch'i gönder
+	autoSetupRemote = true       # upstream otomatik kur
+
+[fetch]
+	prune = true                 # uzak silinen branch'leri yerel'den de sil
+
+[rebase]
+	autoStash = true             # rebase öncesi otomatik stash
+
+[merge]
+	conflictstyle = zdiff3       # çakışmalarda ortak ata bloğunu da göster
+
+[diff]
+	algorithm     = histogram    # daha iyi diff algoritması
+	colorMoved    = default      # taşınan satırları farklı renkle göster
+	mnemonicPrefix = true        # a/ b/ yerine i/ w/ c/
+
+[log]
+	date = relative              # "3 hours ago" formatında tarih
+
+[status]
+	short  = true
+	branch = true
+
+[color]
+	ui = auto
+
+[color "diff"]
+	meta       = yellow
+	frag       = magenta bold
+	old        = red bold
+	new        = green bold
+	whitespace = red reverse
+
+[color "branch"]
+	current  = yellow reverse
+	local    = yellow
+	remote   = green
+
+# ── Delta (diff pager) ──────────────────────────────────────────────────────
+# brew install git-delta  /  apt install git-delta
+[delta]
+	navigate         = true      # n/N ile dosya atla
+	side-by-side     = true      # yan yana diff
+	line-numbers     = true
+	syntax-theme     = tokyonight
+	hyperlinks       = true
+
+[interactive]
+	diffFilter = delta --color-only
+
+# ── Alias'lar ───────────────────────────────────────────────────────────────
+[alias]
+	# Kısa yollar
+	st  = status -sb
+	co  = checkout
+	sw  = switch
+	br  = branch -vv
+	bra = branch -vva
+
+	# Log görünümleri
+	lg  = log --oneline --graph --decorate -20
+	lga = log --oneline --graph --decorate --all -30
+	lgs = log --stat --oneline -10
+	who = shortlog -sn --no-merges
+
+	# Diff
+	dc  = diff --cached          # staged değişiklikleri göster
+	ds  = diff --stat
+
+	# Düzeltme
+	undo   = reset HEAD~1 --mixed       # son commit'i geri al (dosyalar staged)
+	amend  = commit --amend --no-edit   # son commit'e ekle (mesaj değiştirme)
+	fixup  = commit --fixup
+
+	# Temizlik
+	cleanup = "!git branch --merged main | grep -v '\\*\\|main\\|master\\|develop' | xargs -n 1 git branch -d"
+	gone    = "!git fetch -p && git branch -vv | grep ': gone]' | awk '{print $1}' | xargs git branch -D"
+
+	# Yardımcılar
+	aliases = config --get-regexp alias
+	root    = rev-parse --show-toplevel
+	assume  = update-index --assume-unchanged
+	unassume = update-index --no-assume-unchanged
+
+	# Stash
+	sl  = stash list
+	sp  = stash pop
+	ss  = stash save
+
+# ── URL kısayolları ─────────────────────────────────────────────────────────
+[url "git@github.com:"]
+	insteadOf = gh:              # gh:kullanici/repo → git@github.com:kullanici/repo
+
+[url "git@gitlab.com:"]
+	insteadOf = gl:
+
+# ── Kimlik bilgileri (platforma göre) ──────────────────────────────────────
+# macOS Keychain
+[credential "https://github.com"]
+	helper = osxkeychain
+
+# Linux (gnome-libsecret veya git-credential-manager kuruluysa)
+# [credential]
+# 	helper = /usr/share/doc/git/contrib/credential/libsecret/git-credential-libsecret
+
+# ── GPG imzalama (isteğe bağlı) ─────────────────────────────────────────────
+# [user]
+# 	signingkey = GPG_KEY_ID
+# [commit]
+# 	gpgsign = true
+# [tag]
+# 	gpgsign = true
