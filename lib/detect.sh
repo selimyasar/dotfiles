@@ -253,8 +253,13 @@ detect_dump() {
 
 # ─────────────────────────────────────────────
 #  Script doğrudan çalıştırılırsa dump yap
-#  source edilirse sessiz kal
+#  source edilirse sessiz kal (bash + zsh uyumlu)
 # ─────────────────────────────────────────────
-if [ "${BASH_SOURCE[0]}" = "$0" ] || [ "${0##*/}" = "detect.sh" ]; then
-  detect_dump
+if [ -n "${BASH_VERSION:-}" ]; then
+  [ "${BASH_SOURCE[0]}" = "$0" ] && detect_dump
+elif [ -n "${ZSH_VERSION:-}" ]; then
+  case "${ZSH_EVAL_CONTEXT:-}" in
+    *:file*) : ;;          # source edildi → sessiz
+    *)       detect_dump ;;  # doğrudan çalıştırıldı → rapor
+  esac
 fi

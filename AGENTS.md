@@ -31,6 +31,7 @@ No automated tests. Verify with:
 ## Gotchas
 
 - Default repo is hardcoded to `https://github.com/selimyasar/dotfiles.git` (override via `DOTFILES_REPO`/`--repo=`).
-- `bash/.bashrc` has an interactive-only guard (`[[ $- != *i* ]] && return`); `.bash_profile` just sources `.bashrc`, so the theme only loads in interactive shells.
+- `bash/.bashrc` has an interactive-only guard (`[[ $- != *i* ]] && return`); `.bash_profile` just sources `.bashrc`, so the theme only loads in interactive shells. `zsh/.zshrc` starts with a `ZSH_VERSION` guard so sourcing it in bash exits silently instead of erroring.
+- "Run vs source" detection differs per shell: `detect.sh`/`install.sh` use `BASH_SOURCE` under bash and `ZSH_EVAL_CONTEXT` under zsh. Sourcing `lib/install.sh` must stay silent — if it ever runs `install_all` on source, that guard is broken.
 - The theme rewrites the terminal's ANSI palette (OSC 4) at startup and resets it on exit; it never touches fg/bg/cursor unless `DOTFILES_FORCE_BG=1`. `kitty` is intentionally skipped (manages its own colors); SSH/none/basic skip color application entirely.
 - Never run `bash lib/install.sh` or `bash setup.sh` (without `--dry-run`) to test — they install packages and rewrite `$HOME` symlinks/rc files.

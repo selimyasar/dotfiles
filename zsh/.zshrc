@@ -1,5 +1,11 @@
 # ~/.dotfiles/zsh/.zshrc
 
+# ── Koruma: yalnızca zsh içindir ────────────────────────────────────────────
+# bash'te `source ~/.zshrc` çalıştırılırsa hata vermeden sessizce çık.
+if [ -z "${ZSH_VERSION:-}" ]; then
+  return 0 2>/dev/null || exit 0
+fi
+
 # ── Performans: başlangıç süresi ölçümü ───────────────────────────────────────
 # Aktifleştirmek için: ZPROF=1 zsh
 [[ -n "$ZPROF" ]] && zmodload zsh/zprof
@@ -38,4 +44,4 @@ zstyle ':completion:*:descriptions' format '%F{yellow}-- %d --%f'
 [ -f "$HOME/.zshrc.local" ] && source "$HOME/.zshrc.local"
 
 # ── Profil çıktısı ────────────────────────────────────────────────────────────
-[[ -n "$ZPROF" ]] && zprof
+if [[ -n "${ZPROF:-}" ]]; then zprof; fi

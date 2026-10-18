@@ -20,9 +20,17 @@ Env: `DOTFILES_DIR` (varsayılan `~/.dotfiles`) · `DOTFILES_REPO` · `DOTFILES_
 
 ## Etkinleştirme
 
+Shell'e göre:
+
 ```bash
-source ~/.zshrc        # veya: exec zsh / yeni terminal
+# bash kullanıyorsan
+source ~/.bashrc
+
+# zsh kullanıyorsan
+source ~/.zshrc        # veya: exec zsh
 ```
+
+> `~/.zshrc` zsh'e özeldir. bash içinde `source ~/.zshrc` çalıştırma; dosya artık hata vermeden sessizce çıkar ama tema da yüklenmez. En temizi yeni bir terminal açmaktır.
 
 ## Kontrol
 

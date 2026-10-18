@@ -7,7 +7,7 @@
 #  Guard — detect.sh yüklü mü?
 # ─────────────────────────────────────────────
 if [ -z "${DT_OS:-}" ]; then
-  SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+  SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]:-$0}")" && pwd)"
   if [ -f "$SCRIPT_DIR/detect.sh" ]; then
     # shellcheck disable=SC1091
     source "$SCRIPT_DIR/detect.sh"
@@ -323,8 +323,13 @@ install_status() {
 
 # ─────────────────────────────────────────────
 #  Script doğrudan çalıştırılırsa install_all
+#  source edilirse sessiz kal (bash + zsh uyumlu)
 # ─────────────────────────────────────────────
-if [ "${BASH_SOURCE[0]}" = "$0" ] || [ "${0##*/}" = "install.sh" ]; then
-  install_all
-  install_status
+if [ -n "${BASH_VERSION:-}" ]; then
+  [ "${BASH_SOURCE[0]}" = "$0" ] && { install_all; install_status; }
+elif [ -n "${ZSH_VERSION:-}" ]; then
+  case "${ZSH_EVAL_CONTEXT:-}" in
+    *:file*) : ;;                              # source edildi → sessiz
+    *)       install_all; install_status ;;    # doğrudan çalıştırıldı
+  esac
 fi

@@ -16,4 +16,4 @@ shopt -s autocd 2>/dev/null || true
 [ -f "$HOME/.dotfiles/lib/theme.sh" ] && source "$HOME/.dotfiles/lib/theme.sh"
 
 # ── Yerel override ───────────────────────────────────────────────────────────
-[ -f "$HOME/.bashrc.local" ] && source "$HOME/.bashrc.local"
+[ -f "$HOME/.bashrc.local" ] && source "$HOME/.bashrc.local" || true
