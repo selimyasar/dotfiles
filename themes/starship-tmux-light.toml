@@ -1,0 +1,48 @@
+# starship-tmux-light.toml
+# Tmux içi — dar panel, kısa prompt, Nerd Font var — AYDINLIK mod (Tokyonight Day)
+
+"$schema" = 'https://starship.rs/config-schema.json'
+
+add_newline = false
+command_timeout = 600
+
+# Tek satır, kompakt
+format = '$directory$git_branch$git_status$character'
+
+[character]
+success_symbol = '[❯](bold #587539)'
+error_symbol   = '[❯](bold #f52a65)'
+
+[directory]
+style             = 'bold #2e7de9'
+truncation_length = 2
+truncate_to_repo  = true
+format            = '[$path]($style) '
+read_only         = '󰌾 '
+
+[git_branch]
+symbol = ' '
+style  = '#9854f1'
+format = '[$symbol$branch]($style) '
+
+[git_status]
+style  = '#f52a65'
+format = '([$all_status$ahead_behind]($style) )'
+ahead    = '⇡'
+behind   = '⇣'
+modified = '!'
+staged   = '+'
+untracked = '?'
+
+[python]
+disabled = true
+[nodejs]
+disabled = true
+[rust]
+disabled = true
+[golang]
+disabled = true
+[os]
+disabled = true
+[cmd_duration]
+disabled = true

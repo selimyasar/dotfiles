@@ -22,6 +22,8 @@ if [ -z "${DT_OS:-}" ]; then
     DT_IS_SSH="${SSH_CONNECTION:+true}"
     DT_IS_SSH="${DT_IS_SSH:-false}"
     DT_COLOR_SUPPORT="256"
+    DT_APPEARANCE="${DOTFILES_THEME_MODE:-dark}"
+    [ "$DT_APPEARANCE" = "auto" ] && DT_APPEARANCE="dark"
   fi
 fi
 
@@ -32,23 +34,32 @@ fi
 _load_starship() {
   command -v starship &>/dev/null || return 0
 
-  local config_file
+  local base config_file
 
-  # Öncelik: SSH > tmux > terminal emülatör
+  # Öncelik: SSH > tmux > truecolor
   if [ "$DT_IS_SSH" = "true" ]; then
-    config_file="$THEME_CONFIG_DIR/starship-ssh.toml"
+    base="starship-ssh"
   elif [ "$DT_IS_TMUX" = "true" ]; then
-    config_file="$THEME_CONFIG_DIR/starship-tmux.toml"
+    base="starship-tmux"
   elif [ "$DT_COLOR_SUPPORT" = "truecolor" ]; then
-    config_file="$THEME_CONFIG_DIR/starship-full.toml"
+    base="starship-full"
   else
-    config_file="$THEME_CONFIG_DIR/starship-minimal.toml"
+    base="starship-minimal"
   fi
 
-  # Config yoksa varsayılanı kullan
-  if [ ! -f "$config_file" ]; then
-    config_file="$DOTFILES_DIR/starship.toml"
+  config_file="$THEME_CONFIG_DIR/$base.toml"
+
+  # Aydınlık modda varsa -light varyantını tercih et
+  if [ "$DT_APPEARANCE" = "light" ] && [ -f "$THEME_CONFIG_DIR/$base-light.toml" ]; then
+    config_file="$THEME_CONFIG_DIR/$base-light.toml"
   fi
+
+  # Config yoksa varsayılanlara düş
+  [ -f "$config_file" ] || config_file="$THEME_CONFIG_DIR/starship-full.toml"
+  [ -f "$config_file" ] || config_file="$DOTFILES_DIR/starship.toml"
+
+  # Config değişmediyse yeniden init etme (gereksiz hook tekrarını önler)
+  [ "$config_file" = "${STARSHIP_CONFIG:-}" ] && return 0
 
   export STARSHIP_CONFIG="$config_file"
 
@@ -92,29 +103,63 @@ _apply_color_scheme() {
 }
 
 # OSC 4 ile ANSI renk paletini yeniden tanımla (her terminalde çalışır)
+# Palet görünüme (light/dark) göre seçilir; arka plan/ön plan yalnızca
+# DOTFILES_FORCE_BG=1 ise değiştirilir (terminal profilinin light/dark
+# geçişini bozmamak için varsayılan kapalı).
 _apply_ansi_colors() {
   [ "$DT_COLOR_SUPPORT" = "none" ] && return 0
-  # Tokyonight color palette — terminal'in 16 ANSI rengini override eder
-  printf '\033]4;0;#1a1b26\007'   # black
-  printf '\033]4;1;#f7768e\007'   # red
-  printf '\033]4;2;#9ece6a\007'   # green
-  printf '\033]4;3;#e0af68\007'   # yellow
-  printf '\033]4;4;#7aa2f7\007'   # blue
-  printf '\033]4;5;#bb9af7\007'   # magenta
-  printf '\033]4;6;#7dcfff\007'   # cyan
-  printf '\033]4;7;#a9b1d6\007'   # white
-  printf '\033]4;8;#414868\007'   # bright black
-  printf '\033]4;9;#f7768e\007'   # bright red
-  printf '\033]4;10;#9ece6a\007'  # bright green
-  printf '\033]4;11;#e0af68\007'  # bright yellow
-  printf '\033]4;12;#7aa2f7\007'  # bright blue
-  printf '\033]4;13;#bb9af7\007'  # bright magenta
-  printf '\033]4;14;#7dcfff\007'  # bright cyan
-  printf '\033]4;15;#c0caf5\007'  # bright white
-  # Arka plan ve ön plan rengi
-  printf '\033]10;#c0caf5\007'    # foreground
-  printf '\033]11;#1a1b26\007'    # background
-  printf '\033]12;#c0caf5\007'    # cursor
+  _DT_COLORS_APPLIED=1
+
+  if [ "$DT_APPEARANCE" = "light" ]; then
+    # Tokyonight Day
+    printf '\033]4;0;#b4b5b9\007'   # black
+    printf '\033]4;1;#f52a65\007'   # red
+    printf '\033]4;2;#587539\007'   # green
+    printf '\033]4;3;#8c6c3e\007'   # yellow
+    printf '\033]4;4;#2e7de9\007'   # blue
+    printf '\033]4;5;#9854f1\007'   # magenta
+    printf '\033]4;6;#007197\007'   # cyan
+    printf '\033]4;7;#6172b0\007'   # white
+    printf '\033]4;8;#a1a6c5\007'   # bright black
+    printf '\033]4;9;#ff4774\007'   # bright red
+    printf '\033]4;10;#5c8524\007'  # bright green
+    printf '\033]4;11;#a27629\007'  # bright yellow
+    printf '\033]4;12;#358aff\007'  # bright blue
+    printf '\033]4;13;#a463ff\007'  # bright magenta
+    printf '\033]4;14;#007ea8\007'  # bright cyan
+    printf '\033]4;15;#3760bf\007'  # bright white
+  else
+    # Tokyonight Night
+    printf '\033]4;0;#1a1b26\007'   # black
+    printf '\033]4;1;#f7768e\007'   # red
+    printf '\033]4;2;#9ece6a\007'   # green
+    printf '\033]4;3;#e0af68\007'   # yellow
+    printf '\033]4;4;#7aa2f7\007'   # blue
+    printf '\033]4;5;#bb9af7\007'   # magenta
+    printf '\033]4;6;#7dcfff\007'   # cyan
+    printf '\033]4;7;#a9b1d6\007'   # white
+    printf '\033]4;8;#414868\007'   # bright black
+    printf '\033]4;9;#f7768e\007'   # bright red
+    printf '\033]4;10;#9ece6a\007'  # bright green
+    printf '\033]4;11;#e0af68\007'  # bright yellow
+    printf '\033]4;12;#7aa2f7\007'  # bright blue
+    printf '\033]4;13;#bb9af7\007'  # bright magenta
+    printf '\033]4;14;#7dcfff\007'  # bright cyan
+    printf '\033]4;15;#c0caf5\007'  # bright white
+  fi
+
+  # Arka plan / ön plan / kursor — opt-in
+  if [ "${DOTFILES_FORCE_BG:-0}" = "1" ]; then
+    if [ "$DT_APPEARANCE" = "light" ]; then
+      printf '\033]10;#3760bf\007'  # foreground
+      printf '\033]11;#e1e2e7\007'  # background
+      printf '\033]12;#3760bf\007'  # cursor
+    else
+      printf '\033]10;#c0caf5\007'  # foreground
+      printf '\033]11;#1a1b26\007'  # background
+      printf '\033]12;#c0caf5\007'  # cursor
+    fi
+  fi
 }
 
 # iTerm2: proprietary escape ile profil veya renk şeması değiştir
@@ -321,6 +366,68 @@ _ssh_banner() {
 }
 
 # ─────────────────────────────────────────────
+#  Paleti terminal varsayılanına geri yükle (çıkışta)
+#  OSC 104/110/111/112 — kaydetmeye gerek yok, terminal kendi
+#  profil renklerine döner.
+# ─────────────────────────────────────────────
+_reset_colors() {
+  [ "${_DT_COLORS_APPLIED:-0}" = "1" ] || return 0
+  [ "${DOTFILES_RESET_COLORS:-1}" = "1" ] || return 0
+  printf '\033]104\007'   # ANSI paleti
+  printf '\033]110\007'   # ön plan
+  printf '\033]111\007'   # arka plan
+  printf '\033]112\007'   # kursor
+}
+
+# ─────────────────────────────────────────────
+#  Canlı görünüm geçişi — mod değişince paleti + prompt'u tazele
+#  Yalnızca macOS + otomatik modda; SECONDS ile 5 sn cache (fork yok)
+# ─────────────────────────────────────────────
+_theme_check_time=0
+_theme_check_mode() {
+  [ "$DT_OS" = "macos" ] || return 0
+  [ "${DOTFILES_THEME_MODE:-auto}" = "auto" ] || return 0
+  [ $(( SECONDS - _theme_check_time )) -lt 5 ] && return 0
+  _theme_check_time=$SECONDS
+
+  local mode
+  if [ "$(defaults read -g AppleInterfaceStyle 2>/dev/null)" = "Dark" ]; then
+    mode="dark"
+  else
+    mode="light"
+  fi
+
+  [ "$mode" = "$DT_APPEARANCE" ] && return 0
+  DT_APPEARANCE="$mode"
+  export DT_APPEARANCE
+  _apply_color_scheme
+  _load_starship
+}
+
+# ─────────────────────────────────────────────
+#  Hook'ları kur (mod kontrolü + çıkışta palet sıfırlama)
+# ─────────────────────────────────────────────
+_register_hooks() {
+  case "$DT_SHELL" in
+    zsh)
+      autoload -Uz add-zsh-hook 2>/dev/null
+      add-zsh-hook precmd  _theme_check_mode 2>/dev/null
+      add-zsh-hook zshexit _reset_colors     2>/dev/null
+      ;;
+    bash)
+      case ";${PROMPT_COMMAND};" in
+        *";_theme_check_mode;"*) : ;;
+        *) PROMPT_COMMAND="_theme_check_mode${PROMPT_COMMAND:+;$PROMPT_COMMAND}" ;;
+      esac
+      # Mevcut EXIT trap'i ezmemek için yalnızca boşsa kur
+      if [ -z "$(trap -p EXIT 2>/dev/null)" ]; then
+        trap '_reset_colors' EXIT
+      fi
+      ;;
+  esac
+}
+
+# ─────────────────────────────────────────────
 #  Ana yükleyici — sıra önemli
 # ─────────────────────────────────────────────
 theme_load() {
@@ -332,6 +439,7 @@ theme_load() {
   _load_eza_aliases     # ls → eza
   _load_starship        # prompt — en son (PS1'i override eder)
   _ssh_banner           # SSH'taysa bilgi satırı bas
+  _register_hooks       # canlı mod geçişi + çıkışta sıfırlama
 }
 
 theme_load

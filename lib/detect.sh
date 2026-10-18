@@ -181,6 +181,46 @@ detect_arch() {
 }
 
 # ─────────────────────────────────────────────
+#  Görünüm (aydınlık/karanlık) tespiti
+#  Çıktı: DT_APPEARANCE = light | dark
+#  Override: DOTFILES_THEME_MODE=light|dark|auto
+# ─────────────────────────────────────────────
+detect_appearance() {
+  local mode="${DOTFILES_THEME_MODE:-auto}"
+
+  # Elle verilen değer her zaman kazanır (test / SSH / CI)
+  if [ "$mode" = "light" ] || [ "$mode" = "dark" ]; then
+    DT_APPEARANCE="$mode"
+    export DT_APPEARANCE
+    return 0
+  fi
+
+  DT_APPEARANCE=""
+
+  # macOS: sistem görünümü (yalnızca GUI oturumunda çalışır)
+  if [ "$DT_OS" = "macos" ] && command -v defaults &>/dev/null; then
+    if [ "$(defaults read -g AppleInterfaceStyle 2>/dev/null)" = "Dark" ]; then
+      DT_APPEARANCE="dark"
+    else
+      DT_APPEARANCE="light"
+    fi
+  fi
+
+  # Diğer terminaller: COLORFGBG="fg;bg" — bg < 7 koyu, bg >= 7 açık
+  if [ -z "$DT_APPEARANCE" ] && [ -n "${COLORFGBG:-}" ]; then
+    local bg="${COLORFGBG##*;}"
+    case "$bg" in
+      ''|*[!0-9]*) : ;;  # sayı değilse dokunma
+      *) [ "$bg" -ge 7 ] && DT_APPEARANCE="light" || DT_APPEARANCE="dark" ;;
+    esac
+  fi
+
+  # Bilinemiyorsa mevcut davranışı koru (koyu)
+  DT_APPEARANCE="${DT_APPEARANCE:-dark}"
+  export DT_APPEARANCE
+}
+
+# ─────────────────────────────────────────────
 #  Toplu tespit — hepsini çalıştır
 # ─────────────────────────────────────────────
 detect_all() {
@@ -188,6 +228,7 @@ detect_all() {
   detect_shell
   detect_terminal
   detect_arch
+  detect_appearance
 }
 
 # ─────────────────────────────────────────────
@@ -204,6 +245,7 @@ detect_dump() {
   printf  "  │  %-18s %s\n" "SSH:"           "${DT_IS_SSH}"
   printf  "  │  %-18s %s\n" "Tmux:"          "${DT_IS_TMUX}"
   printf  "  │  %-18s %s\n" "Renk desteği:"  "${DT_COLOR_SUPPORT}"
+  printf  "  │  %-18s %s\n" "Görünüm:"       "${DT_APPEARANCE}"
   printf  "  │  %-18s %s\n" "Mimari:"        "${DT_ARCH}"
   echo  "  └──────────────────────────────────────────┘"
   echo ""

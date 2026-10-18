@@ -1,0 +1,56 @@
+# starship.toml
+# Starship fallback config — tema dosyaları bulunamazsa kullanılır.
+# ANSI isimli renkler: terminal paletine uyar, light/dark modda okunur kalır.
+
+"$schema" = 'https://starship.rs/config-schema.json'
+
+add_newline = true
+command_timeout = 800
+
+format = """
+$os\
+$username\
+$directory\
+$git_branch\
+$git_status\
+$cmd_duration\
+$line_break\
+$character"""
+
+[character]
+success_symbol = '[>](bold green)'
+error_symbol   = '[>](bold red)'
+vimcmd_symbol  = '[<](bold yellow)'
+
+[directory]
+style             = 'bold cyan'
+truncation_length = 3
+truncate_to_repo  = true
+format            = '[$path]($style)[$read_only]($read_only_style) '
+read_only         = ' [RO]'
+
+[username]
+show_always = false
+style_user  = 'cyan'
+style_root  = 'bold red'
+format      = '[$user]($style) in '
+
+[git_branch]
+symbol = ''
+style  = 'purple'
+format = 'on [$branch]($style) '
+
+[git_status]
+style    = 'red'
+format   = '([$all_status$ahead_behind]($style) )'
+ahead     = '^${count} '
+behind    = 'v${count} '
+modified  = '*'
+staged    = '+'
+untracked = '?'
+conflicted = '!'
+
+[cmd_duration]
+min_time = 2000
+format   = '[$duration]($style) '
+style    = 'dimmed white'
